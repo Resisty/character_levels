@@ -8,6 +8,7 @@ from datetime import timedelta
 import urllib2, socket, struct, json, os
 from pprint import pprint
 
+static_root = os.path.abspath(os.path.curdir)
 # Create a thread to execute function func
 # with arguments args. Args must be a list
 def spinoff_thread(func,args,kwargs=None):
@@ -48,16 +49,18 @@ def scrape_char():
 
 @app.route('/')
 def indexpage():
-    return send_from_directory('/home/brianauron/character_levels/html', 'index.html')
+    html_dir = os.path.join(static_root, 'html')
+    return send_from_directory(html_dir, 'index.html')
 
 @app.route('/js/<path:filename>')
 def static_proxy(filename):
     # send_static_file will guess the correct MIME type
-    return send_from_directory('/home/brianauron/character_levels/js/', filename)
+    js_dir = os.path.join(static_root, 'js')
+    return send_from_directory(js_dir, filename)
 
 def soup_find_text(html, tag, attr):
     soup = BeautifulSoup(html)
     return soup.body.find(tag, attrs={'class': attr}).text
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug = True)
+    app.run(host='brianauron.info', debug = True)
