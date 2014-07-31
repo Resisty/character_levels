@@ -52,7 +52,7 @@ function makediv(jsonreq) {
     var next_char = document.createElement('div');
     var desc = parsedjson['character'];
     desc = desc + " " + parsedjson['realm'] + ": ";
-    var desc = "Level " + parsedjson['level'];
+    desc = desc + "Level " + parsedjson['level'];
     desc = desc + " " + parsedjson['race'];
     desc = desc + " " + parsedjson['spec tip'];
     desc = desc + " " + parsedjson['class'];
