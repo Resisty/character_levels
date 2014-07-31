@@ -6,6 +6,7 @@ from flask import send_from_directory
 from functools import wraps, update_wrapper
 from datetime import timedelta
 import urllib2, socket, struct, json, os
+from pprint import pprint
 
 # Create a thread to execute function func
 # with arguments args. Args must be a list
@@ -20,10 +21,9 @@ app.secret_key = os.urandom(32)
 @app.route('/character_scrape', methods=['GET', 'POST'])
 def scrape_char():
     error = None
-    poop = request.method
-    if poop == 'POST':
+    if request.method == 'POST':
         try:
-            char, realm = request.form['character'], request.form['realm']
+            char, realm = request.get_json()['character'], request.get_json()['realm']
             url = "http://us.battle.net/wow/en/character/{0}/{1}/simple"
             url = url.format(realm, char)
             html = urllib2.urlopen(url).read()
@@ -42,17 +42,18 @@ def scrape_char():
                       'race': 'N/A',
                       'spec tip': 'N/A',
                       'class': 'N/A'}
-    print stats_data
+    stats_data['character'] = char
+    stats_data['realm'] = realm
     return jsonify(results=stats_data)
 
 @app.route('/')
 def indexpage():
-    return send_from_directory('/home/brianauron/character_scraper/html', 'index.html')
+    return send_from_directory('/home/brianauron/character_levels/html', 'index.html')
 
 @app.route('/js/<path:filename>')
 def static_proxy(filename):
     # send_static_file will guess the correct MIME type
-    return send_from_directory('/home/brianauron/character_scraper/js/', filename)
+    return send_from_directory('/home/brianauron/character_levels/js/', filename)
 
 def soup_find_text(html, tag, attr):
     soup = BeautifulSoup(html)
