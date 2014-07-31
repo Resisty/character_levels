@@ -22,17 +22,18 @@ var characters = {'cenarius': ["Alaali",
 				  "Resistotems",
 				  "Resistystab",
 				  "Resistadin",
-				  "Pathaleon"]};
+				  "Pathaleon",
+				  "Resistyngton"]};
 Object.keys(characters).forEach(function(realm) {
     for(var i = 0; i < characters[realm].length; i++){
 	total_characters = total_characters + 1;
     }
 })
-var max_levels = total_characters * 90;
+var max_levels = characters_counted * 90;
 
 function get_scrape(character, realm, callback) {
     var params = {"character": character, "realm": realm};
-    var url = "http://localhost:5000/character_scrape";
+    var url = "http://brianauron.info:5000/character_scrape";
     console.log(url + " " + params);
     var http = new XMLHttpRequest();
     http.open("POST", url, true);
@@ -66,6 +67,18 @@ function makediv(jsonreq) {
 
 function update_counts() {
     var counts = document.getElementById('counts');
+    var characters = document.getElementById('characters');
+    var wait = document.getElementById('please-wait');
+    var wait_msg = "Please wait, loading characters...";
+    if(wait === null){
+	    wait = document.createElement('div');
+	    wait.setAttribute("id", "please-wait");
+	    wait.innerHTML = wait_msg;
+	    characters.appendChild(wait);
+    }
+    if(characters_counted == total_characters){
+	    characters.removeChild(wait);
+    }
 
     var total = document.getElementById('total');
     if(total === null){
@@ -76,6 +89,7 @@ function update_counts() {
     total.innerHTML = total_desc;
     counts.appendChild(total);
 
+    max_levels = characters_counted * 90;
     var max = document.getElementById('max');
     if(max === null){
 	max = document.createElement('div');
@@ -94,6 +108,7 @@ function update_counts() {
     var diff_desc = "Remaining levels: " + remain;
     diff.innerHTML = diff_desc;
     counts.appendChild(diff);
+
 }
 
 function scrape_characters() {
@@ -104,4 +119,5 @@ function scrape_characters() {
     })
 }
 
+update_counts();
 scrape_characters();
