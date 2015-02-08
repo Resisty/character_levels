@@ -29,11 +29,11 @@ Object.keys(characters).forEach(function(realm) {
 	total_characters = total_characters + 1;
     }
 })
-var max_levels = characters_counted * 90;
+var max_levels = characters_counted * 100;
 
 function get_scrape(character, realm, callback) {
     var params = {"character": character, "realm": realm};
-    var url = "http://brianauron.info:5000/character_scrape";
+    var url = "http://brianauron.info/scrape_characters/character_scrape";
     console.log(url + " " + params);
     var http = new XMLHttpRequest();
     http.open("POST", url, true);
@@ -89,7 +89,7 @@ function update_counts() {
     total.innerHTML = total_desc;
     counts.appendChild(total);
 
-    max_levels = characters_counted * 90;
+    max_levels = characters_counted * 100;
     var max = document.getElementById('max');
     if(max === null){
 	max = document.createElement('div');

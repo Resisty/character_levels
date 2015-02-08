@@ -8,7 +8,8 @@ from datetime import timedelta
 import urllib2, socket, struct, json, os
 from pprint import pprint
 
-static_root = os.path.abspath(os.path.curdir)
+
+static_root = os.path.abspath('/opt/character_levels')
 # Create a thread to execute function func
 # with arguments args. Args must be a list
 def spinoff_thread(func,args,kwargs=None):
@@ -19,9 +20,29 @@ def spinoff_thread(func,args,kwargs=None):
 app = Flask(__name__, static_url_path=os.path.abspath(os.path.curdir))
 app.secret_key = os.urandom(32)
 
-@app.route('/character_scrape', methods=['GET', 'POST'])
+@app.errorhandler(404)
+def page_not_found(e):
+    try:
+        img_dir = os.path.join(static_root, 'img')
+    except Exception as e:
+        return ('Well met!'), 404
+    return send_from_directory(img_dir, 'wellmet.png'), 404
+
+@app.errorhandler(500)
+def page_not_found_500(e):
+    try:
+        img_dir = os.path.join(static_root, 'img')
+    except Exception as e:
+        return ('Well met!'), 500
+    return send_from_directory(img_dir, 'wellmet.png'), 500
+
+@app.route('/character_scrape', methods=['POST'])
 def scrape_char():
     error = None
+    stats_data = {'level': '0',
+                  'race': 'N/A',
+                  'spec tip': 'N/A',
+                  'class': 'N/A'}
     if request.method == 'POST':
         try:
             char, realm = request.get_json()['character'], request.get_json()['realm']
@@ -34,17 +55,10 @@ def scrape_char():
                      'class': 'a'}
             stats_data = {attr: soup_find_text(html, tag, attr) for attr, tag in stats.iteritems()}
         except:
-            stats_data = {'level': '0',
-                          'race': 'N/A',
-                          'spec tip': 'N/A',
-                          'class': 'N/A'}
-    else:
-        stats_data = {'level': '0',
-                      'race': 'N/A',
-                      'spec tip': 'N/A',
-                      'class': 'N/A'}
-    stats_data['character'] = char
-    stats_data['realm'] = realm
+            pass # continue on and return default (meaningless) json if
+                 # something goes wrong
+        stats_data['character'] = char
+        stats_data['realm'] = realm
     return jsonify(results=stats_data)
 
 @app.route('/')
@@ -63,4 +77,4 @@ def soup_find_text(html, tag, attr):
     return soup.body.find(tag, attrs={'class': attr}).text
 
 if __name__ == '__main__':
-    app.run(host='brianauron.info', debug = True)
+    app.run(host='brianauron.info', port=8080, debug = True)
