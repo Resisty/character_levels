@@ -3,3 +3,4 @@
 
 ## Requirements
 - flask==0.10.1
+- BeautifulSoup==4.2.1

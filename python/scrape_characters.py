@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask import session, Response, abort, jsonify, make_response, current_app
 from flask import send_from_directory
@@ -54,7 +54,18 @@ def scrape_char():
                      'spec tip': 'a',
                      'class': 'a'}
             stats_data = {attr: soup_find_text(html, tag, attr) for attr, tag in stats.iteritems()}
-        except:
+            profs = soup_find_text(html, 'a', 'profession-details') + ['first-aid', 'archaeology', 'cooking', 'fishing']
+            stats_data['profession-details'] = {}
+            for i in profs:
+                url = 'http://us.battle.net/wow/en/character/cenarius/alaali/profession/{0}'.format(i.lower())
+                try:
+                    html = urllib2.urlopen(url).read()
+                    stats_data['profession-details'][i] = soup_find_text(html, 'a', 'profession-details')
+                except Exception as e:
+                    traceback.print_exc()
+                    stats_data[i] = 'untrained'
+        except Exception as e:
+            print e
             pass # continue on and return default (meaningless) json if
                  # something goes wrong
         stats_data['character'] = char
@@ -74,7 +85,13 @@ def static_proxy(filename):
 
 def soup_find_text(html, tag, attr):
     soup = BeautifulSoup(html)
-    return soup.body.find(tag, attrs={'class': attr}).text
+    result = soup.body.find_all(tag, attrs={'class': attr})
+    if len(result) == 1 and attr != 'profession-details':
+        return result[0].text
+    elif len(result) > 1 and attr == 'profession-details':
+        return [i.find('span', 'name').text for i in result]
+    else:
+        return result[0].find('span', 'value').text
 
 if __name__ == '__main__':
     app.run(host='brianauron.info', port=8080, debug = True)
