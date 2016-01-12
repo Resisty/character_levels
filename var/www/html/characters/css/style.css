@@ -14,14 +14,14 @@
 
 .panel-default > .Cenarius, .list-group-item > .Cenarius {
 	background-color: #6666FF;
-	color: #FFFF00;
+	color: black;
 	font-family: Lucida Sans Unicode, sans-serif;
 	font-weight: bold;
 }
 
 .list-group > .Cenarius {
 	background-color: #8080FF;
-	color: #FFFF00;
+	color: black;
 	font-family: Lucida Sans Unicode, sans-serif;
 	font-weight: bold;
 }
