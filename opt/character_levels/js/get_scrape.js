@@ -58,6 +58,7 @@ function makediv(jsonreq) {
     desc = desc + " " + parsedjson['spec tip'];
     desc = desc + " " + parsedjson['class'];
     next_char.innerHTML = desc;
+    next_char.style.color = "orange";
     docele.appendChild(next_char);
     total_levels = total_levels + parseInt(parsedjson['level']);
     characters_counted = characters_counted + 1;

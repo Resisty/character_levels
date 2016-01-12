@@ -1,0 +1,72 @@
+.panel-default > .Aerie-peak, .list-group-item > .Aerie-peak {
+	background-color: #FF6666;
+	color: black;
+	font-family: Lucida Sans Unicode, sans-serif;
+	font-weight: bold;
+}
+
+.list-group > .Aerie-peak {
+	background-color: #FF8080;
+	color: black;
+	font-family: Lucida Sans Unicode, sans-serif;
+	font-weight: bold;
+}
+
+.panel-default > .Cenarius, .list-group-item > .Cenarius {
+	background-color: #6666FF;
+	color: #FFFF00;
+	font-family: Lucida Sans Unicode, sans-serif;
+	font-weight: bold;
+}
+
+.list-group > .Cenarius {
+	background-color: #8080FF;
+	color: #FFFF00;
+	font-family: Lucida Sans Unicode, sans-serif;
+	font-weight: bold;
+}
+
+#contact h1 {
+  text-align: center;
+  color: grey;
+}
+
+#links > ul {
+  float: right;
+}
+
+#links > ul > li {
+  padding-left: 4px;
+  display: inline;
+}
+
+#links > ul > li > a {
+  color: orange;
+}
+
+#contact ul {
+  text-align: center;
+}
+
+#contact ul li {
+  display: inline;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+}
+h3 {
+  font-size: 20px;
+}
+h4 {
+  font-size: 16px;
+}
+
+#contact ul, #links ul {
+  list-style-type: none;
+}
+
+li {
+	margin: 0px;
+}
