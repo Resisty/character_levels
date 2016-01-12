@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 import character
+import os
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask import session, Response, abort, jsonify, make_response, current_app
-from flask import send_from_directory
 from functools import wraps, update_wrapper
 from datetime import timedelta
-import urllib2, socket, struct, json, os
 from pprint import pprint
 
 
@@ -41,7 +40,14 @@ def scrape_char():
     error = None
     if request.method == 'GET':
         character.psql_db.connect()
-        return jsonify(characters = character.get_characters())
+        characters = character.get_characters()
+        total = sum([int(i['level']) for i in characters])
+        # Warlords of Draenor: max level 100
+        maximum = 100 * len(characters)
+        character_info = {'total': total,
+                          'maximum': maximum,
+                          'characters': characters}
+        return jsonify(character_info = character_info)
 
 if __name__ == '__main__':
     app.run(host='brianauron.info', port=8080, debug = True)

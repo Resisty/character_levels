@@ -8,7 +8,16 @@
     };
 
     function makeDiv(data) {
-	var characters = data['characters'];
+	var character_info = data['character_info'];
+	console.log(JSON.stringify(character_info));
+	var characters = character_info['characters'];
+	var maximum = character_info['maximum'];
+	var total = character_info['total'];
+	var total_max = 'Total levels / Maximum levels: ' + total + ' / ' + maximum;
+	var h2 = $("<h2>",
+	           {text: total_max});
+	h2.appendTo($('#counts'));
+	$('#counts')
 	$.each(characters, function(index, character) {
 	    var uid = character['realm_name'];
 	    var name = character['name'];

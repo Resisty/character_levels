@@ -7,7 +7,7 @@
 #
 #  Creation Date : 10-01-2016
 #
-#  Last Modified : Mon 11 Jan 2016 12:28:08 AM CST
+#  Last Modified : Tue 12 Jan 2016 09:16:12 AM CST
 #
 #  Created By : Brian Auron
 #
@@ -85,3 +85,8 @@ def get_characters():
         characters.append(char)
     return characters
 
+def main():
+    r = update_characters()
+
+if __name__ == '__main__':
+    main()
