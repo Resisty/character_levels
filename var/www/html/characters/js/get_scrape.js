@@ -26,6 +26,7 @@
 	    var race = character['race'];
 	    var spec_tip = character['spec_tip'];
 	    var charclass = character['charclass'];
+	    var href = character['href'];
 	    var title = name + ' - ' + level + ' ' + spec_tip + ' ' + charclass + ' on ' + realm;
 	    var panel = $("<div>",
 		          {class: 'panel panel-default',
@@ -37,9 +38,12 @@
 	    panelhead.appendTo(panel);
 	    var h3 = $("<h3>",
 		      {class: 'panel-heading',
-		       text: title,
 		       id: uid + "-p"});
 	    h3.appendTo(panelhead);
+	    var a = $("<a>",
+		      {text: title});
+	    a.attr('href', href);
+	    a.appendTo(h3);
 	    var ul = $("<ul>",
 		       {class: 'list-group',
 			id: name + "-list"});

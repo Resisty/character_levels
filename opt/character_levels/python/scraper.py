@@ -7,7 +7,7 @@
 #
 #  Creation Date : 19-02-2015
 #
-#  Last Modified : Tue 12 Jan 2016 01:49:03 AM CST
+#  Last Modified : Sat 19 Mar 2016 03:59:48 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -32,40 +32,55 @@ def soup_find_text(html, tag, attr):
 
 class Scraper(object):
     def __init__(self, realm_name):
-        self.url = "http://us.battle.net/wow/en/character/{}/"
-        self.url = self.url.format(realm_name)
-        self.simple = self.url + "simple"
-        html = self.__getCharacterHTML__()
-        self.stats = self.__getCharacterStats__(html)
-        self.professions = self.__getCharacterProfs__(html)
+        self._url = "http://us.battle.net/wow/en/character/%s/" % realm_name
+        self._simple = self.url + "simple"
+        self._html = None
+        self._stats = None
+        self._professions = {}
 
-    def __getCharacterHTML__(self):
-        return requests.get(self.url).text
+    @property
+    def url(self):
+        return self._url
 
-    def __getCharacterStats__(self, html):
-        stats = {'level': 'span',
-                 'race': 'a',
-                 'spec tip': 'a',
-                 'class': 'a'}
-        return {attr: soup_find_text(html, tag, attr) for attr, tag in stats.iteritems()}
+    @property
+    def simple(self):
+        return self._simple
 
-    def __getCharacterProfs__(self, html):
-        profs =  [i.lower() for i in soup_find_text(html, 'a', 'profession-details')]
-        profs += ['first-aid', 'archaeology', 'cooking', 'fishing']
-        url = self.url + 'profession/{}'
-        profession_details = {}
-        for i in profs:
-            prof_url = url.format(i)
-            html = requests.get(prof_url).text
-            prof_level = soup_find_text(html, 'a', 'profession-details')
-            if prof_level == []:
-                continue
-            prof_nums = [float(j.strip()) for j in prof_level.split('/')]
-            profession_details[i] = {}
-            profession_details[i]['string'] = prof_level
-            ratio = int(prof_nums[0] / prof_nums[1] * 100)
-            profession_details[i]['ratio'] = ratio if ratio <= 100 else 100
-        return profession_details
+    @property
+    def html(self):
+        if not self._html:
+            self._html = requests.get(self.url).text
+        return self._html
+
+    @property
+    def stats(self):
+        if not self._stats:
+            stat_dict = {'level': 'span',
+                         'race': 'a',
+                         'spec tip': 'a',
+                         'class': 'a'}
+            self._stats  = ({attr: soup_find_text(self.html, tag, attr)
+                              for attr, tag in stat_dict.iteritems()})
+        return self._stats
+
+    @property
+    def professions(self):
+        if not self._professions:
+            profs =  [i.lower() for i in soup_find_text(self.html, 'a', 'profession-details')]
+            profs += ['first-aid', 'archaeology', 'cooking', 'fishing']
+            url = self.url + 'profession/%s'
+            for i in profs:
+                prof_url = url % i
+                html = requests.get(prof_url).text
+                prof_level = soup_find_text(html, 'a', 'profession-details')
+                if prof_level == []:
+                    continue
+                prof_nums = [float(j.strip()) for j in prof_level.split('/')]
+                self._professions[i] = {}
+                self._professions[i]['string'] = prof_level
+                ratio = int(prof_nums[0] / prof_nums[1] * 100)
+                self._professions[i]['ratio'] = ratio if ratio <= 100 else 100
+        return self._professions
 
     def getStats(self):
         return self.stats
@@ -77,9 +92,9 @@ def main():
     realm_name = 'gilneas/resisty'
     s = Scraper(realm_name)
     print 'Gilneas/Resisty stats:'
-    print s.getStats()
+    print s.stats
     print 'Gilneas/Resisty professions:'
-    print s.getProfs()
+    print s.professions
 
 if __name__ == '__main__':
     main()

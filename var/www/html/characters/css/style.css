@@ -59,6 +59,10 @@ h2 {
 h3 {
   font-size: 20px;
 }
+
+h3 > a:link, a:visited, a:hover, a:active {
+	color: black;
+}
 h4 {
   font-size: 16px;
 }

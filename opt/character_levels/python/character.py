@@ -7,7 +7,7 @@
 #
 #  Creation Date : 10-01-2016
 #
-#  Last Modified : Tue 12 Jan 2016 09:16:12 AM CST
+#  Last Modified : Sat 19 Mar 2016 04:14:31 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -22,6 +22,7 @@ import scraper
 from playhouse.postgres_ext import PostgresqlExtDatabase
 from playhouse.shortcuts import *
 
+HREF = 'http://us.battle.net/wow/en/character/%s/simple'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 yaml_loc = os.path.join(BASE_DIR, 'character_scraper.yaml')
 with open(yaml_loc, 'r') as fptr:
@@ -39,6 +40,7 @@ class Character(peewee.Model):
     charclass = peewee.TextField(null = True)
     professions = peewee.TextField(null = True)
     realm_name = peewee.TextField(unique = True)
+    href = peewee.TextField(default = HREF)
 
     class Meta:
         database = psql_db
@@ -48,14 +50,15 @@ def create_characters():
     psql_db.create_tables([Character])
     for realm, chars in cfg['characters'].iteritems():
         for char in chars:
-            Character.create(realm_name = realm + '/' + char)
+            Character.create(realm_name = realm + '/' + char,
+                             href = HREF % i.realm_name)
 
 def update_characters():
     psql_db.connect()
     for i in Character.select():
         s = scraper.Scraper(i.realm_name)
-        stats = s.getStats()
-        profs = s.getProfs()
+        stats = s.stats
+        profs = s.professions
         modified = datetime.datetime.now()
         level = stats['level']
         race = stats['race']
@@ -67,7 +70,8 @@ def update_characters():
                                   race = race,
                                   spec_tip = spec_tip,
                                   charclass = charclass,
-                                  professions = professions)
+                                  professions = professions,
+                                  href = HREF % i.realm_name)
                           .where(Character.realm_name == i.realm_name))
         query.execute()
 
