@@ -1,2 +1,7 @@
 BeautifulSoup==4.2.1
 flask==0.10.1
+peewee==2.4.6
+requests
+yaml
+json
+
