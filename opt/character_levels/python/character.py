@@ -7,7 +7,7 @@
 #
 #  Creation Date : 10-01-2016
 #
-#  Last Modified : Sat 19 Mar 2016 04:14:31 PM CDT
+#  Last Modified : Fri 09 Sep 2016 11:36:50 AM CDT
 #
 #  Created By : Brian Auron
 #
@@ -50,8 +50,12 @@ def create_characters():
     psql_db.create_tables([Character])
     for realm, chars in cfg['characters'].iteritems():
         for char in chars:
-            Character.create(realm_name = realm + '/' + char,
-                             href = HREF % i.realm_name)
+            realm_name = realm + '/' + char
+            try:
+                Character.create(realm_name=realm_name,
+                                 href=HREF % realm_name)
+            except peewee.IntegrityError:
+                psql_db.connect()
 
 def update_characters():
     psql_db.connect()

@@ -42,8 +42,8 @@ def scrape_char():
         character.psql_db.connect()
         characters = character.get_characters()
         total = sum([int(i['level']) for i in characters])
-        # Warlords of Draenor: max level 100
-        maximum = 100 * len(characters)
+        # Warlords of Draenor: max level 110
+        maximum = 110 * len(characters)
         character_info = {'total': total,
                           'maximum': maximum,
                           'characters': characters}
