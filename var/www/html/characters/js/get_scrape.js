@@ -43,43 +43,20 @@
 	    a.attr('href', href);
 	    a.appendTo(h3);
 	    var ul = $("<ul>",
-		       {class: 'list-group',
-			id: name + "-list"});
-	    ul.appendTo(panelhead);
-	    $.each(character['professions'], function(key, value) {
+		       {class: 'thumbnails',
+			id: name + "-render"});
+	    if (character['render'] != 'No rendered image available.') {
+		ul.appendTo(panelhead);
 		var li = $("<li>",
-			   {class: 'list-group-item ' + realm});
+			   {class: 'span4'});
 		li.appendTo(ul);
-		var row = $("<div>",
-		            {class: 'row'});
-		row.appendTo(li);
-		var namecol = $("<div>",
-		                {class: 'col-sm-3'});
-		namecol.appendTo(row);
-		var p = $("<p>",
-		          {text: key});
-		p.appendTo(namecol);
-		var numcol = $("<div>",
-		           {class: 'col-sm-9'});
-		numcol.appendTo(row);
-		var percent = value['ratio']
-		var progress = $("<div>",
-		    {class: 'progress-bar progress-bar-success',
-		     role: 'progressbar',
-		     'aria-valuenow': percent,
-		     'aria-valuemin': 0,
-		     'aria-valuemax': 100,
-		     style: 'min-width: 7em; width: ' + percent + '%;',
-		     text: value['string']});
-	    	progress.appendTo(numcol);
-	    });
-	    if ( jQuery.isEmptyObject(character['professions']) ) {
-		var li = $("<li>",
-			   {class: 'list-group-item ' + realm,
-			   text: 'No professions'});
-		li.appendTo(ul);
-	    } else {
-		console.log(uid + ' professions: ' + JSON.stringify(character['professions']));
+		var ahref = $("<a>",
+			    {href: character['render'],
+			     class: 'thumbnail'});
+		ahref.appendTo(li);
+		var img = $("<img>",
+			    {src: character['render']});
+		img.appendTo(ahref);
 	    }
 	});
     }

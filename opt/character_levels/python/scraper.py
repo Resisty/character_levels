@@ -7,7 +7,7 @@
 #
 #  Creation Date : 19-02-2015
 #
-#  Last Modified : Mon 12 Mar 2018 02:55:04 PM CDT
+#  Last Modified : Mon 12 Mar 2018 04:45:53 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -35,7 +35,7 @@ class Scraper(object):
         self._url = "http://us.battle.net/wow/en/character/%s/" % realm_name
         self._html = None
         self._stats = None
-        self._professions = {}
+        self._render = None
 
     @property
     def url(self):
@@ -62,6 +62,19 @@ class Scraper(object):
             self._stats = {'level': level,
                            'details': details}
         return self._stats
+
+    @property
+    def render(self):
+        if not self._render:
+            render = (BeautifulSoup(self.html, 'html5lib')
+                      .find('div',
+                            'CharacterProfile-export')
+                      .next
+                      .attrs['href'])
+            self._render = render
+            if not self._render:
+                self._render = 'No rendered image available.'
+        return self._render
 
     @property
     def professions(self):

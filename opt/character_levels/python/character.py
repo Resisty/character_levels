@@ -7,7 +7,7 @@
 #
 #  Creation Date : 10-01-2016
 #
-#  Last Modified : Mon 12 Mar 2018 03:02:45 PM CDT
+#  Last Modified : Mon 12 Mar 2018 04:44:09 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -36,7 +36,7 @@ class Character(peewee.Model):
     modified = peewee.DateTimeField(default = datetime.datetime.now())
     level = peewee.TextField(null = True)
     character_detail = peewee.TextField(null = True)
-    professions = peewee.TextField(null = True)
+    render = peewee.TextField(null = True)
     realm_name = peewee.TextField(unique = True)
     href = peewee.TextField(default = HREF)
 
@@ -65,13 +65,12 @@ def update_characters():
         s = scraper.Scraper(i.realm_name)
         character_detail = s.stats['details']
         level = s.stats['level']
-        profs = s.professions
+        render = s.render
         modified = datetime.datetime.now()
-        professions = json.dumps(profs)
         query = (Character.update(modified = modified,
                                   level = level,
                                   character_detail = character_detail,
-                                  professions = professions,
+                                  render = render,
                                   href = HREF % i.realm_name)
                           .where(Character.realm_name == i.realm_name))
         query.execute()
@@ -81,10 +80,6 @@ def get_characters():
     characters = []
     for i in chars:
         char = model_to_dict(i)
-        try:
-            char['professions'] = json.loads(char['professions'])
-        except TypeError:
-            char['professions'] = None
         name, realm = i.realm_name.split('/')
         char['realm'], char['name'] = name.capitalize(), realm.capitalize()
         characters.append(char)
