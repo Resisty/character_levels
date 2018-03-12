@@ -7,7 +7,7 @@
 #
 #  Creation Date : 10-01-2016
 #
-#  Last Modified : Fri 09 Sep 2016 11:36:50 AM CDT
+#  Last Modified : Mon 12 Mar 2018 03:02:45 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -35,9 +35,7 @@ psql_db = PostgresqlExtDatabase(db, user = dbuser, password = dbpass)
 class Character(peewee.Model):
     modified = peewee.DateTimeField(default = datetime.datetime.now())
     level = peewee.TextField(null = True)
-    race = peewee.TextField(null = True)
-    spec_tip = peewee.TextField(null = True)
-    charclass = peewee.TextField(null = True)
+    character_detail = peewee.TextField(null = True)
     professions = peewee.TextField(null = True)
     realm_name = peewee.TextField(unique = True)
     href = peewee.TextField(default = HREF)
@@ -57,23 +55,22 @@ def create_characters():
             except peewee.IntegrityError:
                 psql_db.connect()
 
+def drop_characters():
+    psql_db.connect()
+    psql_db.drop_tables([Character])
+
 def update_characters():
     psql_db.connect()
     for i in Character.select():
         s = scraper.Scraper(i.realm_name)
-        stats = s.stats
+        character_detail = s.stats['details']
+        level = s.stats['level']
         profs = s.professions
         modified = datetime.datetime.now()
-        level = stats['level']
-        race = stats['race']
-        spec_tip = stats['spec tip']
-        charclass = stats['class']
         professions = json.dumps(profs)
         query = (Character.update(modified = modified,
                                   level = level,
-                                  race = race,
-                                  spec_tip = spec_tip,
-                                  charclass = charclass,
+                                  character_detail = character_detail,
                                   professions = professions,
                                   href = HREF % i.realm_name)
                           .where(Character.realm_name == i.realm_name))

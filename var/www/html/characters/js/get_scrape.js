@@ -23,11 +23,9 @@
 	    var name = character['name'];
 	    var realm = character['realm'];
 	    var level = character['level'];
-	    var race = character['race'];
-	    var spec_tip = character['spec_tip'];
-	    var charclass = character['charclass'];
+	    var character_detail = character['character_detail'];
 	    var href = character['href'];
-	    var title = name + ' - ' + level + ' ' + spec_tip + ' ' + charclass + ' on ' + realm;
+	    var title = name + ' - ' + level + ' ' + character_detail;
 	    var panel = $("<div>",
 		          {class: 'panel panel-default',
 			   id: uid + '-panel'});

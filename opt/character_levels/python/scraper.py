@@ -7,7 +7,7 @@
 #
 #  Creation Date : 19-02-2015
 #
-#  Last Modified : Sat 19 Mar 2016 03:59:48 PM CDT
+#  Last Modified : Mon 12 Mar 2018 02:55:04 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -33,7 +33,6 @@ def soup_find_text(html, tag, attr):
 class Scraper(object):
     def __init__(self, realm_name):
         self._url = "http://us.battle.net/wow/en/character/%s/" % realm_name
-        self._simple = self.url + "simple"
         self._html = None
         self._stats = None
         self._professions = {}
@@ -55,12 +54,13 @@ class Scraper(object):
     @property
     def stats(self):
         if not self._stats:
-            stat_dict = {'level': 'span',
-                         'race': 'a',
-                         'spec tip': 'a',
-                         'class': 'a'}
-            self._stats  = ({attr: soup_find_text(self.html, tag, attr)
-                              for attr, tag in stat_dict.iteritems()})
+            stats = (BeautifulSoup(self.html, 'html5lib')
+                     .findAll('div', 'CharacterHeader-detail'))
+            details = ' '.join([i.string for i in stats])
+            tokens = details.split(' ')
+            level, details = tokens[0], ' '.join(tokens[1:])
+            self._stats = {'level': level,
+                           'details': details}
         return self._stats
 
     @property
@@ -89,11 +89,11 @@ class Scraper(object):
         return self.professions
 
 def main():
-    realm_name = 'gilneas/resisty'
+    realm_name = 'cenarius/resistidari'
     s = Scraper(realm_name)
-    print 'Gilneas/Resisty stats:'
+    print 'Cenarius/bediviere stats:'
     print s.stats
-    print 'Gilneas/Resisty professions:'
+    print 'Cenarius/bediviere professions:'
     print s.professions
 
 if __name__ == '__main__':
