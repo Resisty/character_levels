@@ -51,7 +51,7 @@
 			   {class: 'span4'});
 		li.appendTo(ul);
 		var ahref = $("<a>",
-			    {href: character['render'],
+			    {href: href,
 			     class: 'thumbnail'});
 		ahref.appendTo(li);
 		var img = $("<img>",
